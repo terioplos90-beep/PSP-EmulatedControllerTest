@@ -1,0 +1,30 @@
+
+name: Build Emulated Controller Test
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/pspdev/pspsdk:latest
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Configure PSP
+        run: psp-cmake -S . -B build
+
+      - name: Build PRX
+        run: cmake --build build --parallel
+
+      - name: Upload PRX
+        uses: actions/upload-artifact@v4
+        with:
+          name: emu-ctrl-test
+          path: build/*.prx
